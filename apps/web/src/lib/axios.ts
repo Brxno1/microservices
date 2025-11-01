@@ -27,26 +27,25 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401) {
-      const originalRequest = error.config
+      const originalRequest = error.config;
 
-      if (originalRequest?.url?.includes('/auth/refresh')) {
-        const { useAuthStore } = await import('@/store/auth-store')
-        useAuthStore.getState().logout()
-        return Promise.reject(error)
+      if (originalRequest?.url?.includes("/auth/refresh")) {
+        useAuthStore.getState().logout();
+        return Promise.reject(error);
       }
 
       if (!originalRequest?._retry) {
-        originalRequest._retry = true
+        originalRequest._retry = true;
         try {
-          await api.post('/auth/refresh', {})
-          return api(originalRequest)
+          await api.post("/auth/refresh", {});
+          return api(originalRequest);
         } catch (refreshError) {
-          const { useAuthStore } = await import('@/store/auth-store')
-          useAuthStore.getState().logout()
-          return Promise.reject(refreshError)
+          useAuthStore.getState().logout();
+          return Promise.reject(refreshError);
         }
       }
     }
-    return Promise.reject(error)
+
+    return Promise.reject(error);
   }
-)
+);
