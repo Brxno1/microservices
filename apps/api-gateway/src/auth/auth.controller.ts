@@ -14,8 +14,37 @@ export class AuthController {
   @Post('/register')
   @HttpCode(201)
   @AuthSwaggerConfig.register()
-  async register(@Body() registerData: RegisterUserDto) {
-    return this.authService.register(registerData)
+  async register(
+    @Body() registerData: RegisterUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const authResponse = await this.authService.register(registerData)
+
+    if (authResponse.refreshToken) {
+      res.cookie('refreshToken', authResponse.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+      })
+    }
+
+    if (authResponse.accessToken) {
+      res.cookie('accessToken', authResponse.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000,
+        path: '/',
+      })
+    }
+
+    return {
+      accessToken: authResponse.accessToken,
+      refreshToken: authResponse.refreshToken,
+      user: authResponse.user,
+    }
   }
 
   @Post('/login')
