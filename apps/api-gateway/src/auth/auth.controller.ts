@@ -132,7 +132,6 @@ export class AuthController {
 
   @Post('/logout')
   @HttpCode(200)
-  @AuthSwaggerConfig.logout()
   async logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('accessToken', {
       httpOnly: true,
