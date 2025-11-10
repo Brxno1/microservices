@@ -12,6 +12,10 @@ COPY apps/auth-service/package.json ./apps/auth-service/
 
 RUN pnpm install --no-frozen-lockfile
 
+COPY prisma/ ./prisma/
+
+RUN npx prisma generate
+
 RUN pnpm --filter @jungle/constants build && pnpm --filter @jungle/types build
 
 COPY apps/auth-service/ ./apps/auth-service/

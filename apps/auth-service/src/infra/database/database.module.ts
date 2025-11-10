@@ -5,9 +5,12 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { RefreshTokenBlacklist } from '@/auth/entities/refresh-token-blacklist.entity'
 import { User } from '@/auth/entities/user.entity'
 
+import { PrismaModule } from './prisma/prisma.module'
+
 @Module({
   imports: [
     ConfigModule,
+    PrismaModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -25,6 +28,6 @@ import { User } from '@/auth/entities/user.entity'
     }),
     TypeOrmModule.forFeature([User, RefreshTokenBlacklist]),
   ],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, PrismaModule],
 })
 export class DatabaseModule {}

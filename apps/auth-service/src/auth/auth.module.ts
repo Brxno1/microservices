@@ -2,8 +2,9 @@ import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
+import { PrismaUserRepository } from '@/infra/database/prisma/prisma-user.repository'
+
 import { TypeormRefreshTokenBlacklistRepository } from '../infra/database/typeorm/typeorm-refresh-token-blacklist.repository'
-import { TypeormUserRepository } from '../infra/database/typeorm/typeorm-user.repository'
 import { JwtConfigModule } from '../infra/jwt/jwt.module'
 import { TokenService } from '../infra/jwt/token.service'
 import { AuthController } from './auth.controller'
@@ -32,7 +33,7 @@ import { RegisterUserUseCase } from './use-cases/register-user'
     TokenService,
     RefreshTokenBlacklistService,
     { provide: AuthServiceContract, useClass: AuthService },
-    { provide: UsersRepository, useClass: TypeormUserRepository },
+    { provide: UsersRepository, useClass: PrismaUserRepository },
     { provide: TokenServiceContract, useClass: TokenService },
     {
       provide: RefreshTokenBlacklistRepository,
